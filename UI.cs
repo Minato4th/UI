@@ -140,9 +140,6 @@ class UI : Form
 
         //List Apartment
         lw_Apartment = new ListView();
-
-        ListView m_FilesList = new ListView();
-
         //lw_Apartment.Dock = DockStyle.Top;
         lw_Apartment.Location = new System.Drawing.Point(50, 100);
         lw_Apartment.Size = new System.Drawing.Size(500, 200);

@@ -10,70 +10,105 @@ namespace myNamespace
         private Adress adress;
         private Rooms rooms;
         private House house;
-                
+
         public Appartment()
         {
             adress = new Adress();
-            adress.SetCity("Chisinau");
-            adress.SetFloor(10);
-            adress.SetStreetName("Stafan");
-            adress.SetStreetNumber(25);
-            adress.SetHoseNumber(5);
-            adress.SetAppartemntNumber(99);
+            adress.City = "Chisinau";
+            adress.Floor = 10;
+            adress.StreetName = "Stafan";
+            adress.StreetNumber = 25;
+            adress.HouseNumber = 5;
+            adress.AppartemntNumber = 99;
 
             house = new House();
-            house.SetSerialName("New");
-            house.SetSerialNumber(2017);
-            house.SetYers(1);
-            house.SetFloors(15);
+            house.SerialName = "New";
+            house.SerialNumber = 2017;
+            house.Yers = 1;
+            house.Floors = 15;
 
 
             rooms = new Rooms();
-            rooms.SetNumberOfRooms(2);
-            
+            rooms.NumberOfRooms = 2;
+
             Room room = new Room();
-            room.SetName(RoomName.Hall);
-            room.SetSideLength1(10D);
-            room.SetSideLength2(20D);
+            room.RoomName = RoomName.Hall;
+            room.SideLength1 = 10D;
+            room.SideLength2 = 20D;
             room.CalculateArea();
             List<Room> list = new List<Room>();
             list.Add(room);
-            room.SetName(RoomName.Restroom);
+            room.RoomName = RoomName.Restroom;
             list.Add(room);
-            rooms.SetRoom(list);
-                
+            rooms.Room = list;
+
+            //adress = new Adress();
+            //adress.SetCity("Chisinau");
+            //adress.SetFloor(10);
+            //adress.SetStreetName("Stafan");
+            //adress.SetStreetNumber(25);
+            //adress.SetHoseNumber(5);
+            //adress.SetAppartemntNumber(99);
+
+            //house = new House();
+            //house.SetSerialName("New");
+            //house.SetSerialNumber(2017);
+            //house.SetYers(1);
+            //house.SetFloors(15);
+
+
+            //rooms = new Rooms();
+            //rooms.SetNumberOfRooms(2);
+
+            //Room room = new Room();
+            //room.SetName(RoomName.Hall);
+            //room.SetSideLength1(10D);
+            //room.SetSideLength2(20D);
+            //room.CalculateArea();
+            //List<Room> list = new List<Room>();
+            //list.Add(room);
+            //room.SetName(RoomName.Restroom);
+            //list.Add(room);
+            //rooms.SetRoom(list);
+
 
         }
 
-        public Adress GetAdress()
-        {
-            return adress;
-        }
+        public Adress Adress{ get{ return adress; } set{ adress = value; } }
 
-        public void SetAdress(Adress value)
-        {
-            adress = value;
-        }
+        public Rooms Rooms { get { return rooms; } set { rooms = value; } }
 
-        public Rooms GetRooms()
-        {
-            return rooms;
-        }
+        public House House { get { return house; } set { house = value; } }
 
-        public void SetRooms(Rooms value)
-        {
-            rooms = value;
-        }
+        //public Adress GetAdress()
+        //{
+        //    return adress;
+        //}
 
-        public House GetHouse()
-        {
-            return house;
-        }
+        //public void SetAdress(Adress value)
+        //{
+        //    adress = value;
+        //}
 
-        public void SetHouse(House value)
-        {
-            house = value;
-        }
+        //public Rooms GetRooms()
+        //{
+        //    return rooms;
+        //}
+
+        //public void SetRooms(Rooms value)
+        //{
+        //    rooms = value;
+        //}
+
+        //public House GetHouse()
+        //{
+        //    return house;
+        //}
+
+        //public void SetHouse(House value)
+        //{
+        //    house = value;
+        //}
 
         public override string ToString()
         {
@@ -97,30 +132,31 @@ namespace myNamespace
         private List<Room> room;
 
 
-        public Rooms()
-        {
+        public Rooms(){}
 
-        }
+        public int NumberOfRooms { get { return numberOfRooms; } set { numberOfRooms = value; } }
 
-        public int GetNumberOfRooms()
-        {
-            return numberOfRooms;
-        }
+        public List<Room> Room { get { return room; } set { room = value; } }
 
-        public void SetNumberOfRooms(int value)
-        {
-            numberOfRooms = value;
-        }
+        //public int GetNumberOfRooms()
+        //{
+        //    return numberOfRooms;
+        //}
 
-        public List<Room> GetRoom()
-        {
-            return room;
-        }
+        //public void SetNumberOfRooms(int value)
+        //{
+        //    numberOfRooms = value;
+        //}
 
-        public void SetRoom(List<Room> value)
-        {
-            room = value;
-        }
+        //public List<Room> GetRoom()
+        //{
+        //    return room;
+        //}
+
+        //public void SetRoom(List<Room> value)
+        //{
+        //    room = value;
+        //}
 
         public override string ToString()
         {
@@ -147,40 +183,48 @@ namespace myNamespace
 
         public Room() {}
 
-        public RoomName GetName()
-        {
-            return name;
-        }
+        public RoomName RoomName { get { return name; } set { name = value; } }
 
-        public void SetName(RoomName value)
-        {
-            name = value;
-        }
+        public double SideLength1 { get { return sideLength1; } set { sideLength1 = value; } }
 
-        public double GetSideLength1()
-        {
-            return sideLength1;
-        }
+        public double SideLength2 { get { return sideLength2; } set { sideLength2 = value; } }
 
-        public void SetSideLength1(double value)
-        {
-            sideLength1 = value;
-        }
+        public double Area { get { return area; } set { area = value; } }
 
-        public double GetSideLength2()
-        {
-            return sideLength2;
-        }
+        //public RoomName GetName()
+        //{
+        //    return name;
+        //}
 
-        public void SetSideLength2(double value)
-        {
-            sideLength2 = value;
-        }
+        //public void SetName(RoomName value)
+        //{
+        //    name = value;
+        //}
 
-        public double GetArea()
-        {
-            return area;
-        }
+        //public double GetSideLength1()
+        //{
+        //    return sideLength1;
+        //}
+
+        //public void SetSideLength1(double value)
+        //{
+        //    sideLength1 = value;
+        //}
+
+        //public double GetSideLength2()
+        //{
+        //    return sideLength2;
+        //}
+
+        //public void SetSideLength2(double value)
+        //{
+        //    sideLength2 = value;
+        //}
+
+        //public double GetArea()
+        //{
+        //    return area;
+        //}
 
         public void CalculateArea()
         {
@@ -189,7 +233,7 @@ namespace myNamespace
 
 
     }
-    
+
     enum RoomName
     {
         Kitchen,
@@ -209,70 +253,79 @@ namespace myNamespace
         private int floor;
         private int appartemntNumber;
 
-        public Adress()
-        {
-           
-        }
+        public Adress(){}
 
-        public string GetCity()
-        {
-            return city;
-        }
+        public String City { get { return city; } set { city = value; } }
 
-        public void SetCity(string value)
-        {
-            city = value;
-        }
+        public String StreetName { get { return streetName; } set { streetName = value; } }
 
-        public string GetStreetName()
-        {
-            return streetName;
-        }
+        public int StreetNumber { get { return streetNumber; } set { streetNumber = value; } }
 
-        public void SetStreetName(string value)
-        {
-            streetName = value;
-        }
+        public int HouseNumber { get { return hoseNumber; } set { hoseNumber = value; } }
 
-        public int GetStreetNumber()
-        {
-            return streetNumber;
-        }
+        public int Floor { get { return floor; } set { floor = value; } }
 
-        public void SetStreetNumber(int value)
-        {
-            streetNumber = value;
-        }
+        public int AppartemntNumber { get { return appartemntNumber; } set { appartemntNumber = value; } }
 
-        public int GetHoseNumber()
-        {
-            return hoseNumber;
-        }
+        //public string GetCity()
+        //{
+        //    return city;
+        //}
 
-        public void SetHoseNumber(int value)
-        {
-            hoseNumber = value;
-        }
+        //public void SetCity(string value)
+        //{
+        //    city = value;
+        //}
 
-        public int GetFloor()
-        {
-            return floor;
-        }
+        //public string GetStreetName()
+        //{
+        //    return streetName;
+        //}
 
-        public void SetFloor(int value)
-        {
-            floor = value;
-        }
+        //public void SetStreetName(string value)
+        //{
+        //    streetName = value;
+        //}
 
-        public int GetAppartemntNumber()
-        {
-            return appartemntNumber;
-        }
+        //public int GetStreetNumber()
+        //{
+        //    return streetNumber;
+        //}
 
-        public void SetAppartemntNumber(int value)
-        {
-            appartemntNumber = value;
-        }
+        //public void SetStreetNumber(int value)
+        //{
+        //    streetNumber = value;
+        //}
+
+        //public int GetHoseNumber()
+        //{
+        //    return hoseNumber;
+        //}
+
+        //public void SetHoseNumber(int value)
+        //{
+        //    hoseNumber = value;
+        //}
+
+        //public int GetFloor()
+        //{
+        //    return floor;
+        //}
+
+        //public void SetFloor(int value)
+        //{
+        //    floor = value;
+        //}
+
+        //public int GetAppartemntNumber()
+        //{
+        //    return appartemntNumber;
+        //}
+
+        //public void SetAppartemntNumber(int value)
+        //{
+        //    appartemntNumber = value;
+        //}
     }
 
     class House
@@ -282,49 +335,57 @@ namespace myNamespace
         private int yers;
         private int floors;
 
-        public int GetFloors()
-        {
-            return floors;
-        }
+        public String SerialName { get { return serialName; } set { serialName = value; } }
 
-        public void SetFloors(int value)
-        {
-            floors = value;
-        }
+        public int SerialNumber { get { return serialNumber; } set { serialNumber = value; } }
 
-        public House()
-        {
+        public int Yers { get { return yers; } set { yers = value; } }
 
-        }
+        public int Floors { get { return floors; } set { floors = value; } }
 
-        public string GetSerialName()
-        {
-            return serialName;
-        }
+        //public int GetFloors()
+        //{
+        //    return floors;
+        //}
 
-        public void SetSerialName(string value)
-        {
-            serialName = value;
-        }
+        //public void SetFloors(int value)
+        //{
+        //    floors = value;
+        //}
 
-        public int GetSerialNumber()
-        {
-            return serialNumber;
-        }
+        //public House()
+        //{
 
-        public void SetSerialNumber(int value)
-        {
-            serialNumber = value;
-        }
+        //}
 
-        public int GetYers()
-        {
-            return yers;
-        }
+        //public string GetSerialName()
+        //{
+        //    return serialName;
+        //}
 
-        public void SetYers(int value)
-        {
-            yers = value;
-        }
+        //public void SetSerialName(string value)
+        //{
+        //    serialName = value;
+        //}
+
+        //public int GetSerialNumber()
+        //{
+        //    return serialNumber;
+        //}
+
+        //public void SetSerialNumber(int value)
+        //{
+        //    serialNumber = value;
+        //}
+
+        //public int GetYers()
+        //{
+        //    return yers;
+        //}
+
+        //public void SetYers(int value)
+        //{
+        //    yers = value;
+        //}
     }
 }
