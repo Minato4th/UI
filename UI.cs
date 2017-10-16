@@ -20,7 +20,7 @@ class UI : Form
     private ColumnHeader m_Parameter;
     private ColumnHeader m_Value;
 
-    private Appartment appartment;
+    private Apartment apartment;
 
     public UI()
     {
@@ -29,7 +29,7 @@ class UI : Form
         Location = new System.Drawing.Point(100, 100);
         Size = new System.Drawing.Size(600, 400);
 
-        appartment = new Appartment();
+        apartment = new Apartment();
 
         Closed += new System.EventHandler(UI_Closed);
 
@@ -158,7 +158,7 @@ class UI : Form
 
     private void createAppartment(object sender, System.EventArgs e)
     {
-        DialogApartment dialog_Apartment = new DialogApartment();
+        DialogApartment dialog_Apartment = new DialogApartment(new Apartment());
         dialog_Apartment.ShowDialog();
     }
 

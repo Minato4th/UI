@@ -5,72 +5,45 @@ using myNamespace;
 
 namespace myNamespace
 {
-    class Appartment
+    class Apartment
     {
         private Adress adress;
         private Rooms rooms;
         private House house;
+        private decimal price;
+        private decimal creditRate;
+        private decimal monthlyPay;
 
-        public Appartment()
+        public Apartment()
         {
             adress = new Adress();
-            adress.City = "Chisinau";
-            adress.Floor = 10;
-            adress.StreetName = "Stafan";
-            adress.StreetNumber = 25;
-            adress.HouseNumber = 5;
-            adress.AppartemntNumber = 99;
+            //adress.City = "Chisinau";
+            //adress.Floor = 10;
+            //adress.StreetName = "Stafan";
+            //adress.StreetNumber = 25;
+            //adress.HouseNumber = 5;
+            //adress.AppartemntNumber = 99;
 
             house = new House();
-            house.SerialName = "New";
-            house.SerialNumber = 2017;
-            house.Yers = 1;
-            house.Floors = 15;
+            //house.SerialName = "New";
+            //house.SerialNumber = 2017;
+            //house.Yers = 1;
+            //house.Floors = 15;
 
 
             rooms = new Rooms();
-            rooms.NumberOfRooms = 2;
-
-            Room room = new Room();
-            room.RoomName = RoomName.Hall;
-            room.SideLength1 = 10D;
-            room.SideLength2 = 20D;
-            room.CalculateArea();
-            List<Room> list = new List<Room>();
-            list.Add(room);
-            room.RoomName = RoomName.Restroom;
-            list.Add(room);
-            rooms.Room = list;
-
-            //adress = new Adress();
-            //adress.SetCity("Chisinau");
-            //adress.SetFloor(10);
-            //adress.SetStreetName("Stafan");
-            //adress.SetStreetNumber(25);
-            //adress.SetHoseNumber(5);
-            //adress.SetAppartemntNumber(99);
-
-            //house = new House();
-            //house.SetSerialName("New");
-            //house.SetSerialNumber(2017);
-            //house.SetYers(1);
-            //house.SetFloors(15);
-
-
-            //rooms = new Rooms();
-            //rooms.SetNumberOfRooms(2);
+            //rooms.NumberOfRooms = 2;
 
             //Room room = new Room();
-            //room.SetName(RoomName.Hall);
-            //room.SetSideLength1(10D);
-            //room.SetSideLength2(20D);
+            //room.RoomName = RoomName.Hall;
+            //room.SideLength1 = 10D;
+            //room.SideLength2 = 20D;
             //room.CalculateArea();
             //List<Room> list = new List<Room>();
             //list.Add(room);
-            //room.SetName(RoomName.Restroom);
+            //room.RoomName = RoomName.Restroom;
             //list.Add(room);
-            //rooms.SetRoom(list);
-
+            //rooms.Room = list;
 
         }
 
@@ -79,6 +52,12 @@ namespace myNamespace
         public Rooms Rooms { get { return rooms; } set { rooms = value; } }
 
         public House House { get { return house; } set { house = value; } }
+
+        public decimal Price { get { return price; } set { price = value; } }
+
+        public decimal CreditRate { get { return creditRate; } set { creditRate = value; } }
+
+        public decimal MonthlyPay { get { return monthlyPay; } set { monthlyPay = value; } }
 
         //public Adress GetAdress()
         //{
@@ -330,10 +309,16 @@ namespace myNamespace
 
     class House
     {
+        private MaterialType materialType;
+        private HouseType houseType;
         private String serialName;
         private int serialNumber;
         private int yers;
         private int floors;
+
+        public MaterialType MaterialType { get { return materialType; } set { materialType = value; } }
+
+        public HouseType HouseType { get { return houseType; } set { houseType = value; } }
 
         public String SerialName { get { return serialName; } set { serialName = value; } }
 
@@ -387,5 +372,20 @@ namespace myNamespace
         //{
         //    yers = value;
         //}
+    }
+
+    enum MaterialType
+    {
+        Wood,
+        Block,
+        Brick,
+        Panel,
+        Monolithic
+    }
+
+    enum HouseType
+    {
+        MultiStorey,
+        Private
     }
 }
