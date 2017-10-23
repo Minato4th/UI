@@ -11,6 +11,7 @@ namespace myNamespace
         private Rooms rooms;
         private House house;
         private decimal price;
+        private int months;
         private decimal creditRate;
         private decimal monthlyPay;
 
@@ -58,6 +59,8 @@ namespace myNamespace
         public decimal CreditRate { get { return creditRate; } set { creditRate = value; } }
 
         public decimal MonthlyPay { get { return monthlyPay; } set { monthlyPay = value; } }
+
+        public int Months { get { return months; } set { months = value; } }
 
         //public Adress GetAdress()
         //{
@@ -156,19 +159,19 @@ namespace myNamespace
     class Room
     {
         private RoomName name;
-        private double sideLength1;
-        private double sideLength2;
-        private double area;
+        private decimal sideLength1;
+        private decimal sideLength2;
+        private decimal area;
 
         public Room() {}
 
         public RoomName RoomName { get { return name; } set { name = value; } }
 
-        public double SideLength1 { get { return sideLength1; } set { sideLength1 = value; } }
+        public decimal SideLength1 { get { return sideLength1; } set { sideLength1 = value; } }
 
-        public double SideLength2 { get { return sideLength2; } set { sideLength2 = value; } }
+        public decimal SideLength2 { get { return sideLength2; } set { sideLength2 = value; } }
 
-        public double Area { get { return area; } set { area = value; } }
+        public decimal Area { get { return area; } set { area = value; } }
 
         //public RoomName GetName()
         //{

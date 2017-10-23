@@ -8,6 +8,8 @@ using myNamespace;
 
 class DialogApartment : Form
 {
+
+    
     private TabControl tc_Main;
 
     private TabPage tb_Main;
@@ -22,7 +24,7 @@ class DialogApartment : Form
 
     // ====================================
 
-    private TextBox tx_Credit;
+    private NumericUpDown tx_Credit;
     private CheckBox inCredit;
 
     private Label cost;
@@ -41,14 +43,12 @@ class DialogApartment : Form
     private Label floor;
     private Label appartemntNumber;
 
-    private TextBox tx_City;
-    private TextBox tx_StreetName;
-    private TextBox tx_StreetNumber;
-    private TextBox tx_HoseNumber;
-    private TextBox tx_Floor;
-    private TextBox tx_AppartemntNumber;
-
-
+    private ComboBox tx_City;
+    private ComboBox tx_StreetName;
+    private NumericUpDown tx_StreetNumber;
+    private NumericUpDown tx_HoseNumber;
+    private NumericUpDown tx_Floor;
+    private NumericUpDown tx_AppartemntNumber;
 
     // ====================================
 
@@ -64,9 +64,9 @@ class DialogApartment : Form
     private Label floors;
 
     private TextBox tx_serialName;
-    private TextBox tx_SerialNumber;
-    private TextBox tx_Yers;
-    private TextBox tx_Floors;
+    private NumericUpDown tx_SerialNumber;
+    private NumericUpDown tx_Yers;
+    private NumericUpDown tx_Floors;
     
     //=======================================
 
@@ -76,14 +76,12 @@ class DialogApartment : Form
     private Label width;
     private Label length;
     private Label area;
-    private Label totalArea;
+    private static Label totalArea;
 
     private GroupBox groupScroll;
     private Panel scrollPanel;
     private VScrollBar scrollBar;
-    private List<RomControler> romControler;
-
-    
+    private static List<RomControler> romControler;
 
 
     public DialogApartment(Apartment apartment)
@@ -96,8 +94,6 @@ class DialogApartment : Form
         Size = new System.Drawing.Size(600, 400);
 
         Closed += new System.EventHandler(UI_Closed);
-
-        
 
         // main methods and controlers in tabs
         //Button
@@ -112,6 +108,7 @@ class DialogApartment : Form
         save.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         save.Font = new System.Drawing.Font("Arial", 12F, FontStyle.Bold);
         save.ForeColor = System.Drawing.Color.FromArgb(50, 205, 50);
+        save.Click += new System.EventHandler(saveApartment);
 
         Controls.Add(save);
 
@@ -141,16 +138,27 @@ class DialogApartment : Form
         //cost.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         cost.Font = new System.Drawing.Font("Arial", 10F);
 
-        //Text Boxes
-        tx_Credit = new TextBox();
-        tx_Credit.Text = "";
+        //Text Boxes-Spiner
+        tx_Credit = new NumericUpDown();
         tx_Credit.Location = new System.Drawing.Point(250, 16);
         tx_Credit.Size = new System.Drawing.Size(100, 60);
         tx_Credit.Font = new System.Drawing.Font("Arial", 10F);
-        tx_Credit.Multiline = false; // multi line
-        tx_Credit.MaxLength = 9;
-        tx_Credit.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
-        tx_Credit.WordWrap = false;
+        tx_Credit.Minimum = new Decimal(0);
+        tx_Credit.Maximum = new Decimal(9999999999);
+        tx_Credit.Increment = new Decimal(1);
+        //s_NumberOfRooms.DecimalPlaces = 0;
+        tx_Credit.Value = new Decimal(0);
+        tx_Credit.ValueChanged += new EventHandler(TrackBar_Scroll);
+
+        //tx_Credit = new TextBox();
+        //tx_Credit.Text = "";
+        //tx_Credit.Location = new System.Drawing.Point(250, 16);
+        //tx_Credit.Size = new System.Drawing.Size(100, 60);
+        //tx_Credit.Font = new System.Drawing.Font("Arial", 10F);
+        //tx_Credit.Multiline = false; // multi line
+        //tx_Credit.MaxLength = 9;
+        //tx_Credit.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
+        //tx_Credit.WordWrap = false;
         //tx_Credit.TextChanged += new EventHandler(TextBox_TextChanged);
 
         //Controls.Add(m_TextBox);
@@ -216,16 +224,33 @@ class DialogApartment : Form
         city.Font = new System.Drawing.Font("Arial", 10F);
         city.TextAlign = ContentAlignment.MiddleLeft;
 
-        tx_City = new TextBox();
-        tx_City.Text = "";
+        //tx_City = new TextBox();
+        //tx_City.Text = "";
+        //tx_City.Location = new System.Drawing.Point(250, 16);
+        //tx_City.Size = new System.Drawing.Size(200, 20);
+        //tx_City.Font = new System.Drawing.Font("Arial", 10F);
+        //tx_City.Multiline = false; // multi line
+        //tx_City.MaxLength = 100;
+        //tx_City.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
+        //tx_City.WordWrap = false;
+        ////tx_City.TextChanged += new EventHandler(TextBox_TextChanged);
+
+        tx_City = new ComboBox();
+        tx_City.Items.Clear();
         tx_City.Location = new System.Drawing.Point(250, 16);
         tx_City.Size = new System.Drawing.Size(200, 20);
         tx_City.Font = new System.Drawing.Font("Arial", 10F);
-        tx_City.Multiline = false; // multi line
-        tx_City.MaxLength = 100;
-        tx_City.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
-        tx_City.WordWrap = false;
-        //tx_City.TextChanged += new EventHandler(TextBox_TextChanged);
+        tx_City.DropDownStyle = ComboBoxStyle.DropDown;
+        tx_City.Items.AddRange(new object[]
+        {   "Chisinau",
+            "Belti",
+            "Leovo",
+            "Cahul",
+            "Orhei"
+        });
+
+        tx_City.KeyDown += new KeyEventHandler(Grid_KeyUp_City);
+
 
 
         streetName = new Label();
@@ -236,17 +261,32 @@ class DialogApartment : Form
         streetName.Font = new System.Drawing.Font("Arial", 10F);
         streetName.TextAlign = ContentAlignment.MiddleLeft;
 
-        tx_StreetName = new TextBox();
-        tx_StreetName.Text = "";
+        //tx_StreetName = new TextBox();
+        //tx_StreetName.Text = "";
+        //tx_StreetName.Location = new System.Drawing.Point(250, 46);
+        //tx_StreetName.Size = new System.Drawing.Size(200, 20);
+        //tx_StreetName.Font = new System.Drawing.Font("Arial", 10F);
+        //tx_StreetName.Multiline = false; // multi line
+        //tx_StreetName.MaxLength = 100;
+        //tx_StreetName.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
+        //tx_StreetName.WordWrap = false;
+        ////tx_StreetName.TextChanged += new EventHandler(TextBox_TextChanged);
+
+
+        tx_StreetName = new ComboBox();
+        tx_StreetName.Items.Clear();
         tx_StreetName.Location = new System.Drawing.Point(250, 46);
         tx_StreetName.Size = new System.Drawing.Size(200, 20);
         tx_StreetName.Font = new System.Drawing.Font("Arial", 10F);
-        tx_StreetName.Multiline = false; // multi line
-        tx_StreetName.MaxLength = 100;
-        tx_StreetName.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
-        tx_StreetName.WordWrap = false;
-        //tx_StreetName.TextChanged += new EventHandler(TextBox_TextChanged);
+        tx_StreetName.DropDownStyle = ComboBoxStyle.DropDown;
+        tx_StreetName.Items.AddRange(new object[]
+        {   "Stefan cel Mare",
+            "Puskin",
+            "Dacia",
+            "Alba Iulia"       
+        });
 
+        tx_StreetName.KeyDown += new KeyEventHandler(Grid_KeyUp_Street);
 
         streetNumber = new Label();
         streetNumber.Name = "Street Number";
@@ -256,15 +296,25 @@ class DialogApartment : Form
         streetNumber.Font = new System.Drawing.Font("Arial", 10F);
         streetNumber.TextAlign = ContentAlignment.MiddleLeft;
 
-        tx_StreetNumber = new TextBox();
-        tx_StreetNumber.Text = "";
+        tx_StreetNumber = new NumericUpDown();
         tx_StreetNumber.Location = new System.Drawing.Point(250, 76);
         tx_StreetNumber.Size = new System.Drawing.Size(200, 20);
         tx_StreetNumber.Font = new System.Drawing.Font("Arial", 10F);
-        tx_StreetNumber.Multiline = false; // multi line
-        tx_StreetNumber.MaxLength = 100;
-        tx_StreetNumber.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
-        tx_StreetNumber.WordWrap = false;
+        tx_StreetNumber.Minimum = new Decimal(0);
+        tx_StreetNumber.Maximum = new Decimal(999);
+        tx_StreetNumber.Increment = new Decimal(1);
+        tx_StreetNumber.Value = new Decimal(0);
+
+
+        //tx_StreetNumber = new TextBox();
+        //tx_StreetNumber.Text = "";
+        //tx_StreetNumber.Location = new System.Drawing.Point(250, 76);
+        //tx_StreetNumber.Size = new System.Drawing.Size(200, 20);
+        //tx_StreetNumber.Font = new System.Drawing.Font("Arial", 10F);
+        //tx_StreetNumber.Multiline = false; // multi line
+        //tx_StreetNumber.MaxLength = 100;
+        //tx_StreetNumber.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
+        //tx_StreetNumber.WordWrap = false;
         //tx_StreetNumber.TextChanged += new EventHandler(TextBox_TextChanged);
 
 
@@ -276,15 +326,24 @@ class DialogApartment : Form
         houseNumber.Font = new System.Drawing.Font("Arial", 10F);
         houseNumber.TextAlign = ContentAlignment.MiddleLeft;
 
-        tx_HoseNumber = new TextBox();
-        tx_HoseNumber.Text = "";
+        tx_HoseNumber = new NumericUpDown();
         tx_HoseNumber.Location = new System.Drawing.Point(250, 106);
         tx_HoseNumber.Size = new System.Drawing.Size(200, 20);
         tx_HoseNumber.Font = new System.Drawing.Font("Arial", 10F);
-        tx_HoseNumber.Multiline = false; // multi line
-        tx_HoseNumber.MaxLength = 100;
-        tx_HoseNumber.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
-        tx_HoseNumber.WordWrap = false;
+        tx_HoseNumber.Minimum = new Decimal(0);
+        tx_HoseNumber.Maximum = new Decimal(999);
+        tx_HoseNumber.Increment = new Decimal(1);
+        tx_HoseNumber.Value = new Decimal(0);
+
+        //tx_HoseNumber = new TextBox();
+        //tx_HoseNumber.Text = "";
+        //tx_HoseNumber.Location = new System.Drawing.Point(250, 106);
+        //tx_HoseNumber.Size = new System.Drawing.Size(200, 20);
+        //tx_HoseNumber.Font = new System.Drawing.Font("Arial", 10F);
+        //tx_HoseNumber.Multiline = false; // multi line
+        //tx_HoseNumber.MaxLength = 100;
+        //tx_HoseNumber.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
+        //tx_HoseNumber.WordWrap = false;
         //tx_HoseNumber.TextChanged += new EventHandler(TextBox_TextChanged);
 
 
@@ -296,15 +355,24 @@ class DialogApartment : Form
         floor.Font = new System.Drawing.Font("Arial", 10F);
         floor.TextAlign = ContentAlignment.MiddleLeft;
 
-        tx_Floor = new TextBox();
-        tx_Floor.Text = "";
+        tx_Floor = new NumericUpDown();
         tx_Floor.Location = new System.Drawing.Point(250, 136);
         tx_Floor.Size = new System.Drawing.Size(200, 20);
         tx_Floor.Font = new System.Drawing.Font("Arial", 10F);
-        tx_Floor.Multiline = false; // multi line
-        tx_Floor.MaxLength = 100;
-        tx_Floor.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
-        tx_Floor.WordWrap = false;
+        tx_Floor.Minimum = new Decimal(0);
+        tx_Floor.Maximum = new Decimal(999);
+        tx_Floor.Increment = new Decimal(1);
+        tx_Floor.Value = new Decimal(0);
+
+        //tx_Floor = new TextBox();
+        //tx_Floor.Text = "";
+        //tx_Floor.Location = new System.Drawing.Point(250, 136);
+        //tx_Floor.Size = new System.Drawing.Size(200, 20);
+        //tx_Floor.Font = new System.Drawing.Font("Arial", 10F);
+        //tx_Floor.Multiline = false; // multi line
+        //tx_Floor.MaxLength = 100;
+        //tx_Floor.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
+        //tx_Floor.WordWrap = false;
         //tx_Floor.TextChanged += new EventHandler(TextBox_TextChanged);
 
 
@@ -316,15 +384,24 @@ class DialogApartment : Form
         appartemntNumber.Font = new System.Drawing.Font("Arial", 10F);
         appartemntNumber.TextAlign = ContentAlignment.MiddleLeft;
 
-        tx_AppartemntNumber = new TextBox();
-        tx_AppartemntNumber.Text = "";
+        tx_AppartemntNumber = new NumericUpDown();
         tx_AppartemntNumber.Location = new System.Drawing.Point(250, 166);
         tx_AppartemntNumber.Size = new System.Drawing.Size(200, 20);
         tx_AppartemntNumber.Font = new System.Drawing.Font("Arial", 10F);
-        tx_AppartemntNumber.Multiline = false; // multi line
-        tx_AppartemntNumber.MaxLength = 100;
-        tx_AppartemntNumber.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
-        tx_AppartemntNumber.WordWrap = false;
+        tx_AppartemntNumber.Minimum = new Decimal(0);
+        tx_AppartemntNumber.Maximum = new Decimal(999);
+        tx_AppartemntNumber.Increment = new Decimal(1);
+        tx_AppartemntNumber.Value = new Decimal(0);
+
+        //tx_AppartemntNumber = new TextBox();
+        //tx_AppartemntNumber.Text = "";
+        //tx_AppartemntNumber.Location = new System.Drawing.Point(250, 166);
+        //tx_AppartemntNumber.Size = new System.Drawing.Size(200, 20);
+        //tx_AppartemntNumber.Font = new System.Drawing.Font("Arial", 10F);
+        //tx_AppartemntNumber.Multiline = false; // multi line
+        //tx_AppartemntNumber.MaxLength = 100;
+        //tx_AppartemntNumber.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
+        //tx_AppartemntNumber.WordWrap = false;
         //tx_AppartemntNumber.TextChanged += new EventHandler(TextBox_TextChanged);
 
 
@@ -345,7 +422,7 @@ class DialogApartment : Form
         s_NumberOfRooms.Minimum = new Decimal(1);
         s_NumberOfRooms.Maximum = new Decimal(999);
         s_NumberOfRooms.Increment = new Decimal(1);
-        s_NumberOfRooms.DecimalPlaces = 1;
+        //s_NumberOfRooms.DecimalPlaces = 0;
         s_NumberOfRooms.Value = new Decimal(1);
         s_NumberOfRooms.ValueChanged += new EventHandler(NumericUpDown_ValueChanged);
 
@@ -377,7 +454,7 @@ class DialogApartment : Form
         area = new Label();
         area.Name = "Area";
         area.Text = "Area";
-        area.Location = new System.Drawing.Point(500, 60);
+        area.Location = new System.Drawing.Point(475, 60);
         area.Size = new System.Drawing.Size(50, 20);
         area.Font = new System.Drawing.Font("Arial", 10F);
         area.TextAlign = ContentAlignment.MiddleLeft;
@@ -481,15 +558,24 @@ class DialogApartment : Form
         serialNumber.Font = new System.Drawing.Font("Arial", 10F);
         serialNumber.TextAlign = ContentAlignment.MiddleLeft;
 
-        tx_SerialNumber = new TextBox();
-        tx_SerialNumber.Text = "";
+        tx_SerialNumber = new NumericUpDown();
         tx_SerialNumber.Location = new System.Drawing.Point(350, 66);
         tx_SerialNumber.Size = new System.Drawing.Size(200, 20);
         tx_SerialNumber.Font = new System.Drawing.Font("Arial", 10F);
-        tx_SerialNumber.Multiline = false; // multi line
-        tx_SerialNumber.MaxLength = 100;
-        tx_SerialNumber.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
-        tx_SerialNumber.WordWrap = false;
+        tx_SerialNumber.Minimum = new Decimal(0);
+        tx_SerialNumber.Maximum = new Decimal(9999);
+        tx_SerialNumber.Increment = new Decimal(1);
+        tx_SerialNumber.Value = new Decimal(0);
+
+        //tx_SerialNumber = new TextBox();
+        //tx_SerialNumber.Text = "";
+        //tx_SerialNumber.Location = new System.Drawing.Point(350, 66);
+        //tx_SerialNumber.Size = new System.Drawing.Size(200, 20);
+        //tx_SerialNumber.Font = new System.Drawing.Font("Arial", 10F);
+        //tx_SerialNumber.Multiline = false; // multi line
+        //tx_SerialNumber.MaxLength = 100;
+        //tx_SerialNumber.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
+        //tx_SerialNumber.WordWrap = false;
         //tx_SerialNumber.TextChanged += new EventHandler(TextBox_TextChanged);
 
         yers = new Label();
@@ -499,15 +585,24 @@ class DialogApartment : Form
         yers.Font = new System.Drawing.Font("Arial", 10F);
         yers.TextAlign = ContentAlignment.MiddleLeft;
 
-        tx_Yers = new TextBox();
-        tx_Yers.Text = "";
+        tx_Yers = new NumericUpDown();
         tx_Yers.Location = new System.Drawing.Point(350, 116);
         tx_Yers.Size = new System.Drawing.Size(200, 20);
         tx_Yers.Font = new System.Drawing.Font("Arial", 10F);
-        tx_Yers.Multiline = false; // multi line
-        tx_Yers.MaxLength = 100;
-        tx_Yers.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
-        tx_Yers.WordWrap = false;
+        tx_Yers.Minimum = new Decimal(1800);
+        tx_Yers.Maximum = new Decimal(2800);
+        tx_Yers.Increment = new Decimal(1);
+        tx_Yers.Value = new Decimal(1800);
+
+        //tx_Yers = new TextBox();
+        //tx_Yers.Text = "";
+        //tx_Yers.Location = new System.Drawing.Point(350, 116);
+        //tx_Yers.Size = new System.Drawing.Size(200, 20);
+        //tx_Yers.Font = new System.Drawing.Font("Arial", 10F);
+        //tx_Yers.Multiline = false; // multi line
+        //tx_Yers.MaxLength = 100;
+        //tx_Yers.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
+        //tx_Yers.WordWrap = false;
         //tx_Yers.TextChanged += new EventHandler(TextBox_TextChanged);
 
 
@@ -518,15 +613,24 @@ class DialogApartment : Form
         floors.Font = new System.Drawing.Font("Arial", 10F);
         floors.TextAlign = ContentAlignment.MiddleLeft;
 
-        tx_Floors = new TextBox();
-        tx_Floors.Text = "";
+        tx_Floors = new NumericUpDown();
         tx_Floors.Location = new System.Drawing.Point(350, 166);
         tx_Floors.Size = new System.Drawing.Size(200, 20);
         tx_Floors.Font = new System.Drawing.Font("Arial", 10F);
-        tx_Floors.Multiline = false; // multi line
-        tx_Floors.MaxLength = 100;
-        tx_Floors.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
-        tx_Floors.WordWrap = false;
+        tx_Floors.Minimum = new Decimal(0);
+        tx_Floors.Maximum = new Decimal(999);
+        tx_Floors.Increment = new Decimal(1);
+        tx_Floors.Value = new Decimal(0);
+
+        //tx_Floors = new TextBox();
+        //tx_Floors.Text = "";
+        //tx_Floors.Location = new System.Drawing.Point(350, 166);
+        //tx_Floors.Size = new System.Drawing.Size(200, 20);
+        //tx_Floors.Font = new System.Drawing.Font("Arial", 10F);
+        //tx_Floors.Multiline = false; // multi line
+        //tx_Floors.MaxLength = 100;
+        //tx_Floors.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
+        //tx_Floors.WordWrap = false;
         //tx_Floors.TextChanged += new EventHandler(TextBox_TextChanged);
 
         //Controls.Add(houseType);
@@ -634,6 +738,147 @@ class DialogApartment : Form
         Controls.Add(tc_Main);
     }
 
+
+
+    ////=======================================
+
+    //private Label numberOfRooms;
+    //private NumericUpDown s_NumberOfRooms;
+    //private Label roomName;
+    //private Label width;
+    //private Label length;
+    //private Label area;
+    //private static Label totalArea;
+
+    //private GroupBox groupScroll;
+    //private Panel scrollPanel;
+    //private VScrollBar scrollBar;
+    //private static List<RomControler> romControler;
+
+    //private ComboBox cb_Room;
+    //private Label calcArea;
+    //private NumericUpDown tx_Width;
+    //private NumericUpDown tx_Length;
+
+    //public RomControler(int incr)
+
+
+    private void saveApartment(object sender, System.EventArgs e)
+    {
+        apartment.Price = Convert.ToDecimal(tx_Credit.Text);
+        apartment.CreditRate = (trackBar.Value > 0) ? Convert.ToDecimal(trackBar.Value)/10 : 0;
+        apartment.MonthlyPay = (trackBar.Value > 0) 
+            ? (Convert.ToDecimal(tx_Credit.Text) * Convert.ToDecimal(trackBar.Value) / 10 / 100 + Convert.ToDecimal(tx_Credit.Text)) / trackBar.Value 
+            : 0;
+        apartment.Months = Convert.ToInt32(trackBar.Value);
+
+        apartment.Adress = new Adress();
+        apartment.Adress.City = tx_City.Text;
+        apartment.Adress.StreetName = tx_StreetName.Text;
+        apartment.Adress.StreetNumber = Convert.ToInt32(tx_StreetNumber.Text);
+        apartment.Adress.HouseNumber = Convert.ToInt32(tx_HoseNumber.Text);
+        apartment.Adress.Floor = Convert.ToInt32(tx_Floor.Text);
+        apartment.Adress.AppartemntNumber = Convert.ToInt32(tx_AppartemntNumber.Text);
+
+
+        apartment.Rooms = new Rooms();
+        apartment.Rooms.NumberOfRooms = Convert.ToInt32(s_NumberOfRooms.Text);
+        apartment.Rooms.Room = new List<Room>();
+
+        foreach(RomControler roomData in romControler)
+        {
+            Room room = new Room();
+            room.RoomName = (RoomName)Enum.Parse(typeof(RoomName), roomData.CB_Room.Text.ToString());
+            room.SideLength1 = roomData.TX_Width.Value;
+            room.SideLength2 = roomData.TX_Length.Value;
+            room.Area = Convert.ToDecimal(roomData.CalcArea.Text);
+
+            apartment.Rooms.Room.Add(room);
+        }
+
+        
+        apartment.House = new House();
+        apartment.House.MaterialType = (MaterialType)Enum.Parse(typeof(MaterialType), lb_MaterialType.SelectedItem.ToString());
+        apartment.House.HouseType = (rb_Private.Checked) ? (HouseType)Enum.Parse(typeof(HouseType), rb_Private.Text.ToString()) 
+            : (HouseType)Enum.Parse(typeof(HouseType), rb_MultiStorey.Text.ToString());
+        apartment.House.SerialName = tx_AppartemntNumber.Text;
+        apartment.House.SerialNumber = Convert.ToInt32(tx_AppartemntNumber.Text);
+        apartment.House.Yers = Convert.ToInt32(tx_AppartemntNumber.Text);
+        apartment.House.Floors = Convert.ToInt32(tx_AppartemntNumber.Text);
+
+        this.DialogResult = DialogResult.OK;
+    }
+
+    public Apartment ReturnData()
+    {
+        return apartment;
+    }
+
+    private void Grid_KeyUp_City(object sender, System.Windows.Forms.KeyEventArgs e)
+    {
+        if (e.KeyCode == Keys.Enter)
+        {
+            if (!tx_City.Items.Contains(tx_City.Text))
+            {
+                tb_Adress.Controls.Remove(tx_City);
+                tx_City.Items.Add(tx_City.Text);
+                tb_Adress.Controls.Add(tx_City);
+            }
+
+        }
+        else if (e.KeyCode == Keys.Delete)
+        {
+            tb_Adress.Controls.Remove(tx_City);
+            tx_City.Items.Remove(tx_City.Text);
+            tb_Adress.Controls.Add(tx_City);
+        }
+    }
+
+    //private void Grid_KeyUp_City(object sender, System.Windows.Forms.KeyEventArgs e)
+    //{
+    //    if (e.KeyCode == Keys.Enter)
+    //    {
+    //        if (!CityList.Contains(tx_City.Text)) {
+    //            CityList.Add(tx_City.Text);
+
+    //            tb_Adress.Controls.Remove(tx_City);
+    //            tx_City.DataSource = CityList;
+    //            tb_Adress.Controls.Add(tx_City);
+    //        }
+
+    //    } else if (e.KeyCode == Keys.Delete)
+    //    {
+    //        CityList.Remove(tx_City.Text);
+
+    //        tb_Adress.Controls.Remove(tx_City);
+    //        tx_City.DataSource = CityList;
+
+
+    //        tb_Adress.Controls.Add(tx_City);
+
+    //    }
+    //}
+
+    private void Grid_KeyUp_Street(object sender, System.Windows.Forms.KeyEventArgs e)
+    {
+        if (e.KeyCode == Keys.Enter)
+        {
+            if (!tx_StreetName.Items.Contains(tx_StreetName.Text))
+            {
+                tb_Adress.Controls.Remove(tx_StreetName);
+                tx_StreetName.Items.Add(tx_StreetName.Text);
+                tb_Adress.Controls.Add(tx_StreetName);
+            }
+
+        }
+        else if (e.KeyCode == Keys.Delete)
+        {
+            tb_Adress.Controls.Remove(tx_StreetName);
+            tx_StreetName.Items.Remove(tx_StreetName.Text);
+            tb_Adress.Controls.Add(tx_StreetName);
+        }
+    }
+
     private void scrollBar_ValueChanged(object sender, System.EventArgs e)
     {
         scrollPanel.Top = -scrollBar.Value;
@@ -674,7 +919,7 @@ class DialogApartment : Form
 
         if (stInMonthlyPay.Length > 0 && inMonths != 0)
         {
-            inMonthlyPay = (Convert.ToDecimal(tx_Credit.Text) * inCreditRate + Convert.ToDecimal(tx_Credit.Text) ) / inMonths;
+            inMonthlyPay = (Convert.ToDecimal(tx_Credit.Text) * inCreditRate/100 + Convert.ToDecimal(tx_Credit.Text) ) / inMonths;
         }
         
 
@@ -684,7 +929,7 @@ class DialogApartment : Form
 
         months.Text = "Number of Months                                 " + inMonths;
         creditRate.Text = "Credit Rate                                            " + inCreditRate + "%";
-        monthlyPay.Text = "Monthly Pay                                           " + inMonthlyPay;
+        monthlyPay.Text = "Monthly Pay                                           " + Decimal.Round(inMonthlyPay, 2);
     }
 
 
@@ -743,10 +988,10 @@ class DialogApartment : Form
     {
         Label totalArea = new Label();
         totalArea.Name = "Total Area";
-        totalArea.Text = "Total Area            1";
-        totalArea.Location = new System.Drawing.Point(400, 0 + 35 * pos);
-        totalArea.Size = new System.Drawing.Size(150, 20);
-        totalArea.Font = new System.Drawing.Font("Arial", 10F);
+        totalArea.Text = "Total Area            0";
+        totalArea.Location = new System.Drawing.Point(340, 0 + 35 * pos);
+        totalArea.Size = new System.Drawing.Size(250, 20);
+        totalArea.Font = new System.Drawing.Font("Arial", 12F);
         totalArea.TextAlign = ContentAlignment.MiddleLeft;
 
         return totalArea;
@@ -755,58 +1000,122 @@ class DialogApartment : Form
     private void NumericUpDown_ValueChanged(object sender, System.EventArgs e)
     {
 
-        if (romControler != null)
+        scrollPanel.Controls.Remove(totalArea);
+        totalArea.Dispose();
+
+        if (s_NumberOfRooms.Value > romControler.Count)
         {
-            for (int i = 0; i < romControler.Count; i++)
+
+            romControler.Add(new RomControler(35 * ((int)s_NumberOfRooms.Value - 1)));
+
+            scrollPanel.Controls.Add(romControler[(int)s_NumberOfRooms.Value - 1].CB_Room);
+            scrollPanel.Controls.Add(romControler[(int)s_NumberOfRooms.Value - 1].CalcArea);
+            scrollPanel.Controls.Add(romControler[(int)s_NumberOfRooms.Value - 1].TX_Width);
+            scrollPanel.Controls.Add(romControler[(int)s_NumberOfRooms.Value - 1].TX_Length);
+
+        } else if (s_NumberOfRooms.Value < romControler.Count)
+        {
+
+            DialogResult result = MessageBox.Show(
+                        "Do you sure that you want to delete last room?",
+                        "Approve delete of room",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Information,
+                        MessageBoxDefaultButton.Button1,
+                        MessageBoxOptions.DefaultDesktopOnly);
+
+            if (result == DialogResult.Yes)
             {
-                scrollPanel.Controls.Remove(romControler[i].CB_Room);
-                scrollPanel.Controls.Remove(romControler[i].CalcArea);
-                scrollPanel.Controls.Remove(romControler[i].TX_Length);
-                scrollPanel.Controls.Remove(romControler[i].TX_Width);
+                scrollPanel.Controls.Remove(romControler[(int)s_NumberOfRooms.Value].CB_Room);
+                scrollPanel.Controls.Remove(romControler[(int)s_NumberOfRooms.Value].CalcArea);
+                scrollPanel.Controls.Remove(romControler[(int)s_NumberOfRooms.Value].TX_Width);
+                scrollPanel.Controls.Remove(romControler[(int)s_NumberOfRooms.Value].TX_Length);
 
-                romControler[i].CB_Room.Dispose();
-                romControler[i].CalcArea.Dispose();
-                romControler[i].TX_Width.Dispose();
-                romControler[i].TX_Length.Dispose();
+                romControler[(int)s_NumberOfRooms.Value].CB_Room.Dispose();
+                romControler[(int)s_NumberOfRooms.Value].CalcArea.Dispose();
+                romControler[(int)s_NumberOfRooms.Value].TX_Width.Dispose();
+                romControler[(int)s_NumberOfRooms.Value].TX_Length.Dispose();
+
+                romControler.RemoveAt((int)s_NumberOfRooms.Value);
             }
-            scrollPanel.Controls.Remove(this.totalArea);
-            this.totalArea.Dispose();
+            else s_NumberOfRooms.Value = s_NumberOfRooms.Value + 1;
+
         }
 
-
-        romControler = new List<RomControler>();
-        int incr = 35;
-        for (int i = 0; i < s_NumberOfRooms.Value; i++)
-        {   
-            romControler.Add(new RomControler(incr * i));
-        }
 
         scrollPanel.Size = new System.Drawing.Size(575, 35 * (int)(s_NumberOfRooms.Value) + 400);
 
-        if((int)(s_NumberOfRooms.Value) * 45 > 200)
+        if ((int)(s_NumberOfRooms.Value) * 45 > 200)
         {
             scrollBar.Maximum = (int)(s_NumberOfRooms.Value) * 45;
             scrollBar.Enabled = true;
-        }else {
+        }
+        else
+        {
             scrollBar.Enabled = false;
         }
-        
+
 
         totalArea = TotalArea((Int32)(s_NumberOfRooms.Value));
         scrollPanel.Controls.Add(totalArea);
+        DialogApartment.changeArea();
 
-        foreach (RomControler i in romControler)
-        {
-            scrollPanel.Controls.Add(i.CB_Room);
-            scrollPanel.Controls.Add(i.CalcArea);
-            scrollPanel.Controls.Add(i.TX_Width);
-            scrollPanel.Controls.Add(i.TX_Length);
-        }
 
-        //if (scrollPanel.Height < 85 + 35 * s_NumberOfRooms.Value)
+        //if (romControler != null)
         //{
-        //    scrollPanel.Size = new System.Drawing.Size(560, 200);
+        //    for (int i = 0; i < romControler.Count; i++)
+        //    {
+        //        scrollPanel.Controls.Remove(romControler[i].CB_Room);
+        //        scrollPanel.Controls.Remove(romControler[i].CalcArea);
+        //        scrollPanel.Controls.Remove(romControler[i].TX_Length);
+        //        scrollPanel.Controls.Remove(romControler[i].TX_Width);
+
+        //        romControler[i].CB_Room.Dispose();
+        //        romControler[i].CalcArea.Dispose();
+        //        romControler[i].TX_Width.Dispose();
+        //        romControler[i].TX_Length.Dispose();
+        //    }
+        //    scrollPanel.Controls.Remove(this.totalArea);
+        //    this.totalArea.Dispose();
         //}
+
+        //scrollPanel.Controls.Remove(this.totalArea);
+        //    this.totalArea.Dispose();
+
+
+        //romControler = new List<RomControler>();
+        //int incr = 35;
+        //for (int i = 0; i < s_NumberOfRooms.Value; i++)
+        //{   
+        //    romControler.Add(new RomControler(incr * i));
+        //}
+
+        //scrollPanel.Size = new System.Drawing.Size(575, 35 * (int)(s_NumberOfRooms.Value) + 400);
+
+        //if((int)(s_NumberOfRooms.Value) * 45 > 200)
+        //{
+        //    scrollBar.Maximum = (int)(s_NumberOfRooms.Value) * 45;
+        //    scrollBar.Enabled = true;
+        //}else {
+        //    scrollBar.Enabled = false;
+        //}
+
+
+        //totalArea = TotalArea((Int32)(s_NumberOfRooms.Value));
+        //scrollPanel.Controls.Add(totalArea);
+
+        //foreach (RomControler i in romControler)
+        //{
+        //    scrollPanel.Controls.Add(i.CB_Room);
+        //    scrollPanel.Controls.Add(i.CalcArea);
+        //    scrollPanel.Controls.Add(i.TX_Width);
+        //    scrollPanel.Controls.Add(i.TX_Length);
+        //}
+
+        ////if (scrollPanel.Height < 85 + 35 * s_NumberOfRooms.Value)
+        ////{
+        ////    scrollPanel.Size = new System.Drawing.Size(560, 200);
+        ////}
 
     }
 
@@ -815,14 +1124,25 @@ class DialogApartment : Form
  
     Dispose();
     }
+
+    public static void changeArea()
+    {
+        decimal summ = 0;
+        foreach (RomControler i in romControler)
+        {
+            summ = summ + Convert.ToDecimal(i.CalcArea.Text);
+        }
+
+        totalArea.Text = "Total Area            " + Decimal.Round(summ, 2);
+    }
 }
 
 class RomControler
 {
     private ComboBox cb_Room;
     private Label calcArea;
-    private TextBox tx_Width;
-    private TextBox tx_Length;
+    private NumericUpDown tx_Width;
+    private NumericUpDown tx_Length;
 
     public RomControler(int incr)
     {
@@ -834,60 +1154,87 @@ class RomControler
         cb_Room.DropDownStyle = ComboBoxStyle.DropDown;
         cb_Room.Font = new System.Drawing.Font("Arial", 10F);
         cb_Room.Items.AddRange(new object[]
-        {   RoomName.Kitchen.ToString(),
+        {
+            RoomName.Kitchen.ToString(),
             RoomName.EntranceHall.ToString(),
             RoomName.Hall.ToString(),
             RoomName.Bedroom.ToString(),
             RoomName.Restroom.ToString(),
             RoomName.Bath.ToString()
         });
+        cb_Room.Text = cb_Room.Items[0].ToString();
+        //cb_Room.SelectedText += new EventHandler(something);
 
-        cb_Room.TextChanged += new EventHandler(SelectRoom);
+        //cb_Room.TextChanged += new EventHandler(SelectRoom);
 
-        tx_Width = new TextBox();
-        tx_Width.Text = "";
+        tx_Width = new NumericUpDown();
         tx_Width.Location = new System.Drawing.Point(175, 0 + incr);
         tx_Width.Size = new System.Drawing.Size(100, 20);
         tx_Width.Font = new System.Drawing.Font("Arial", 10F);
-        tx_Width.Multiline = false; // multi line
-        tx_Width.MaxLength = 100;
-        tx_Width.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
-        tx_Width.WordWrap = false;
+        tx_Width.Minimum = new Decimal(0);
+        tx_Width.Maximum = new Decimal(999);
+        tx_Width.Increment = new Decimal(1);
+        tx_Width.DecimalPlaces = 2;
+        tx_Width.Value = new Decimal(0);
+        tx_Width.ValueChanged += new EventHandler(WidthLength_ValueChanged);
+
+        //tx_Width = new TextBox();
+        //tx_Width.Text = "";
+        //tx_Width.Location = new System.Drawing.Point(175, 0 + incr);
+        //tx_Width.Size = new System.Drawing.Size(100, 20);
+        //tx_Width.Font = new System.Drawing.Font("Arial", 10F);
+        //tx_Width.Multiline = false; // multi line
+        //tx_Width.MaxLength = 100;
+        //tx_Width.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
+        //tx_Width.WordWrap = false;
         //tx_Width.TextChanged += new EventHandler(TextBox_TextChanged);
 
-        tx_Length = new TextBox();
-        tx_Length.Text = "";
+        tx_Length = new NumericUpDown();
         tx_Length.Location = new System.Drawing.Point(325, 0 + incr);
         tx_Length.Size = new System.Drawing.Size(100, 20);
         tx_Length.Font = new System.Drawing.Font("Arial", 10F);
-        tx_Length.Multiline = false; // multi line
-        tx_Length.MaxLength = 100;
-        tx_Length.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
-        tx_Length.WordWrap = false;
+        tx_Length.Minimum = new Decimal(0);
+        tx_Length.Maximum = new Decimal(999);
+        tx_Length.Increment = new Decimal(1);
+        tx_Length.DecimalPlaces = 2;
+        tx_Length.Value = new Decimal(0);
+        tx_Length.ValueChanged += new EventHandler(WidthLength_ValueChanged);
+
+        //tx_Length = new TextBox();
+        //tx_Length.Text = "";
+        //tx_Length.Location = new System.Drawing.Point(325, 0 + incr);
+        //tx_Length.Size = new System.Drawing.Size(100, 20);
+        //tx_Length.Font = new System.Drawing.Font("Arial", 10F);
+        //tx_Length.Multiline = false; // multi line
+        //tx_Length.MaxLength = 100;
+        //tx_Length.ScrollBars = ScrollBars.None; //None, Horizontal, Vertical, Both
+        //tx_Length.WordWrap = false;
         //tx_Length.TextChanged += new EventHandler(TextBox_TextChanged);
 
         calcArea = new Label();
         calcArea.Name = "Calc Area";
-        calcArea.Text = "10";
-        calcArea.Location = new System.Drawing.Point(500, 0 + incr);
-        calcArea.Size = new System.Drawing.Size(50, 20);
+        calcArea.Text = "0.00";
+        calcArea.Location = new System.Drawing.Point(475, 0 + incr);
+        calcArea.Size = new System.Drawing.Size(125, 20);
         calcArea.Font = new System.Drawing.Font("Arial", 10F);
         calcArea.TextAlign = ContentAlignment.MiddleLeft;
     }
 
-    private void SelectRoom(object sender, System.EventArgs e)
+    private void WidthLength_ValueChanged(object sender, System.EventArgs e)
     {
-
+        calcArea.Text = Convert.ToString(Decimal.Round(tx_Width.Value * tx_Length.Value, 2));
+        DialogApartment.changeArea();
     }
+
 
     //private void TextBox_TextChanged(object sender, System.EventArgs e)
     //{
-        
+
     //}
 
     public ComboBox CB_Room { get { return cb_Room; } set { cb_Room = value; } }
     public Label CalcArea { get { return calcArea; } set { calcArea = value; } }
-    public TextBox TX_Width { get { return tx_Width; } set { tx_Width = value; } }
-    public TextBox TX_Length { get { return tx_Length; } set { tx_Length = value; } }
+    public NumericUpDown TX_Width { get { return tx_Width; } set { tx_Width = value; } }
+    public NumericUpDown TX_Length { get { return tx_Length; } set { tx_Length = value; } }
 
 }

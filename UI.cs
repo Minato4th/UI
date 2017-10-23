@@ -2,6 +2,8 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 
 using myNamespace;
 
@@ -20,6 +22,8 @@ class UI : Form
     private ColumnHeader m_Parameter;
     private ColumnHeader m_Value;
 
+    private Dictionary<String, Apartment> apartamentMap;
+
     private Apartment apartment;
 
     public UI()
@@ -30,6 +34,7 @@ class UI : Form
         Size = new System.Drawing.Size(600, 400);
 
         apartment = new Apartment();
+        apartamentMap = new Dictionary<String, Apartment>();
 
         Closed += new System.EventHandler(UI_Closed);
 
@@ -125,14 +130,14 @@ class UI : Form
         cb_Apartments.Size = new System.Drawing.Size(160, 20);
         cb_Apartments.DropDownStyle = ComboBoxStyle.DropDown;
         cb_Apartments.Font = new System.Drawing.Font("Arial", 12F);
-        cb_Apartments.Items.AddRange(new object[]
-        {   "Red",
-            "Orange",
-            "Yellow",
-            "Green",
-            "Cyan",
-            "Blue",
-            "Magenta"});
+        //cb_Apartments.Items.AddRange(new object[]
+        //{   "Red",
+        //    "Orange",
+        //    "Yellow",
+        //    "Green",
+        //    "Cyan",
+        //    "Blue",
+        //    "Magenta"});
 
         cb_Apartments.TextChanged += new EventHandler(SelectApartment);
 
@@ -158,15 +163,59 @@ class UI : Form
 
     private void createAppartment(object sender, System.EventArgs e)
     {
-        DialogApartment dialog_Apartment = new DialogApartment(new Apartment());
-        dialog_Apartment.ShowDialog();
+
+        if (cb_Apartments.Text.Equals(""))
+        {
+            DialogResult result = MessageBox.Show(
+                        "Please insert Name in box",
+                        "Name wasn't inserted",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information,
+                        //MessageBoxDefaultButton.Button1,
+                        //MessageBoxOptions.DefaultDesktopOnly
+                        );
+
+        } else if(apartamentMap.ContainsKey(cb_Apartments.Text))
+        {
+            DialogResult result = MessageBox.Show(
+                        "Please insert new name",
+                        "Name alredy exist",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information,
+                        //MessageBoxDefaultButton.Button1,
+                        //MessageBoxOptions.DefaultDesktopOnly
+                        );
+        }
+        else createAp();
+
+
+
+
     }
 
-    
+    private void createAp()
+    {
+        DialogApartment dialog_Apartment = new DialogApartment(new Apartment());
+        dialog_Apartment.ShowDialog();
+
+        if (dialog_Apartment.DialogResult == DialogResult.OK)
+        {
+            apartamentMap.Add(cb_Apartments.Text, dialog_Apartment.ReturnData());
+
+            foreach (KeyValuePair<string, Apartment> entry in apartamentMap)
+            {
+                cb_Apartments.Items.Add(entry.Key);
+                //entry.Value or entry.Key
+
+            }
+            Controls.Remove(cb_Apartments);
+            Controls.Add(cb_Apartments);
+        }
+    }
+
     private void UI_Closed(object sender, EventArgs e)
     {
- 
-    Dispose();
+        Dispose();
     }
 }
 
