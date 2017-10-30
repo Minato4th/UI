@@ -5,6 +5,7 @@ using myNamespace;
 
 namespace myNamespace
 {
+    [Serializable]
     class Apartment
     {
         private Adress adress;
@@ -14,6 +15,7 @@ namespace myNamespace
         private int months;
         private decimal creditRate;
         private decimal monthlyPay;
+        private bool inCredit;
 
         public Apartment()
         {
@@ -62,6 +64,8 @@ namespace myNamespace
 
         public int Months { get { return months; } set { months = value; } }
 
+        public bool InCredit { get { return inCredit; } set { inCredit = value; } }
+
         //public Adress GetAdress()
         //{
         //    return adress;
@@ -108,6 +112,7 @@ namespace myNamespace
         }
     }
 
+    [Serializable]
     class Rooms
     {
         private int numberOfRooms;
@@ -156,6 +161,7 @@ namespace myNamespace
         }
     }
 
+    [Serializable]
     class Room
     {
         private RoomName name;
@@ -216,6 +222,7 @@ namespace myNamespace
 
     }
 
+    [Serializable]
     enum RoomName
     {
         Kitchen,
@@ -226,6 +233,7 @@ namespace myNamespace
         Bath
     }
 
+    [Serializable]
     class Adress
     {
         private String city;
@@ -310,6 +318,7 @@ namespace myNamespace
         //}
     }
 
+    [Serializable]
     class House
     {
         private MaterialType materialType;
@@ -377,6 +386,7 @@ namespace myNamespace
         //}
     }
 
+    [Serializable]
     enum MaterialType
     {
         Wood,
@@ -386,6 +396,7 @@ namespace myNamespace
         Monolithic
     }
 
+    [Serializable]
     enum HouseType
     {
         MultiStorey,

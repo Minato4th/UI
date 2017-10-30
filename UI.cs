@@ -4,6 +4,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 using myNamespace;
 
@@ -26,9 +28,13 @@ class UI : Form
 
     private Apartment apartment;
 
+    private ListViewItem all;
+
+    private BinaryFormatter formatter;
+
     public UI()
     {
-        Text = "Appatments - Dialog based application";
+        Text = "Apatments - Dialog based application";
         StartPosition = FormStartPosition.Manual;
         Location = new System.Drawing.Point(100, 100);
         Size = new System.Drawing.Size(600, 400);
@@ -41,7 +47,7 @@ class UI : Form
         //Text
         m_Label = new Label();
         m_Label.Name = "Main Menu";
-        m_Label.Text = "Choice the action";
+        m_Label.Text = "Choose the action";
         m_Label.Location = new System.Drawing.Point(16, 16);
         m_Label.Size = new System.Drawing.Size(500, 40);
         m_Label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -72,7 +78,7 @@ class UI : Form
         b_Edit.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         b_Edit.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
 
-        b_Edit.Click += new System.EventHandler(createAppartment);
+        b_Edit.Click += new System.EventHandler(editAppartment);
 
         Controls.Add(b_Edit);
 
@@ -86,7 +92,7 @@ class UI : Form
         b_Delete.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         b_Delete.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
 
-        b_Delete.Click += new System.EventHandler(createAppartment);
+        b_Delete.Click += new System.EventHandler(deleteAppartment);
 
         Controls.Add(b_Delete);
 
@@ -103,7 +109,7 @@ class UI : Form
         b_Save.Font = new System.Drawing.Font("Arial", 12F, FontStyle.Bold);
         b_Save.ForeColor = System.Drawing.Color.FromArgb(50, 205, 50);
 
-        b_Save.Click += new System.EventHandler(createAppartment);
+        b_Save.Click += new System.EventHandler(SerializeData);
 
         Controls.Add(b_Save);
 
@@ -119,7 +125,7 @@ class UI : Form
         b_Load.Font = new System.Drawing.Font("Arial", 12F, FontStyle.Bold);
         b_Load.ForeColor = System.Drawing.Color.FromArgb(255, 69, 0);
 
-        b_Load.Click += new System.EventHandler(createAppartment);
+        b_Load.Click += new System.EventHandler(DeserializeData);
 
         Controls.Add(b_Load);
 
@@ -146,70 +152,289 @@ class UI : Form
         //List Apartment
         lw_Apartment = new ListView();
         //lw_Apartment.Dock = DockStyle.Top;
-        lw_Apartment.Location = new System.Drawing.Point(50, 100);
-        lw_Apartment.Size = new System.Drawing.Size(500, 200);
+        lw_Apartment.Location = new System.Drawing.Point(25, 100);
+        lw_Apartment.Size = new System.Drawing.Size(525, 200);
         lw_Apartment.View = View.Details;
         lw_Apartment.Columns.Add("Parametrs", 195, HorizontalAlignment.Left);
-        lw_Apartment.Columns.Add("Values", 295, HorizontalAlignment.Left);
-
+        lw_Apartment.Columns.Add("Values", 305, HorizontalAlignment.Left);
+        
         Controls.Add(lw_Apartment);
 
     }
 
-    private void SelectApartment(object sender, System.EventArgs e)
+    private void SerializeData(object sender, System.EventArgs e)
     {
+        formatter = new BinaryFormatter();
 
-    }
-
-    private void createAppartment(object sender, System.EventArgs e)
-    {
-
-        if (cb_Apartments.Text.Equals(""))
+        using (FileStream fs = new FileStream("apartment.dat", FileMode.OpenOrCreate))
         {
-            DialogResult result = MessageBox.Show(
-                        "Please insert Name in box",
-                        "Name wasn't inserted",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information,
-                        //MessageBoxDefaultButton.Button1,
-                        //MessageBoxOptions.DefaultDesktopOnly
-                        );
-
-        } else if(apartamentMap.ContainsKey(cb_Apartments.Text))
-        {
-            DialogResult result = MessageBox.Show(
-                        "Please insert new name",
-                        "Name alredy exist",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information,
-                        //MessageBoxDefaultButton.Button1,
-                        //MessageBoxOptions.DefaultDesktopOnly
-                        );
+            formatter.Serialize(fs, apartamentMap);
         }
-        else createAp();
-
-
-
-
     }
 
-    private void createAp()
+    private void DeserializeData(object sender, System.EventArgs e)
     {
-        DialogApartment dialog_Apartment = new DialogApartment(new Apartment());
-        dialog_Apartment.ShowDialog();
+        formatter = new BinaryFormatter();
 
-        if (dialog_Apartment.DialogResult == DialogResult.OK)
+        using (FileStream fs = new FileStream("apartment.dat", FileMode.OpenOrCreate))
         {
-            apartamentMap.Add(cb_Apartments.Text, dialog_Apartment.ReturnData());
+            apartamentMap = (Dictionary<String, Apartment>)formatter.Deserialize(fs);
 
+            cb_Apartments.Items.Clear();
             foreach (KeyValuePair<string, Apartment> entry in apartamentMap)
             {
                 cb_Apartments.Items.Add(entry.Key);
                 //entry.Value or entry.Key
 
             }
+            cb_Apartments.Text = "";
             Controls.Remove(cb_Apartments);
             Controls.Add(cb_Apartments);
+        }
+    }
+
+    private void SelectApartment(object sender, System.EventArgs e)
+    {
+        lw_Apartment.Items.Clear();
+        if (apartamentMap.Count > 0 && apartamentMap.ContainsKey(cb_Apartments.Text))
+        {
+
+            Apartment apartment = apartamentMap[cb_Apartments.Text];
+            all = new ListViewItem("Apartment Name");
+            all.SubItems.Add(cb_Apartments.Text);
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("Money");
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("Price");
+            all.SubItems.Add(Convert.ToString(apartment.Price));
+            lw_Apartment.Items.Add(all);
+
+            
+            if (apartment.InCredit)
+            {
+                all = new ListViewItem("In Credit");
+                all.SubItems.Add("Yes");
+                lw_Apartment.Items.Add(all);
+
+                all = new ListViewItem("Credit Month");
+                all.SubItems.Add(Convert.ToString(apartment.Months));
+                lw_Apartment.Items.Add(all);
+
+                all = new ListViewItem("Credit Rate");
+                all.SubItems.Add(Convert.ToString(Decimal.Round(apartment.CreditRate, 2)) + "%");
+                lw_Apartment.Items.Add(all);
+
+                all = new ListViewItem("Monthly Pay");
+                all.SubItems.Add(Convert.ToString(Decimal.Round(apartment.MonthlyPay, 2)));
+                lw_Apartment.Items.Add(all);
+            }
+            else
+            {
+                all = new ListViewItem("In Credit");
+                all.SubItems.Add("No");
+                lw_Apartment.Items.Add(all);
+            }
+
+
+            all = new ListViewItem("Adress");
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("City");
+            all.SubItems.Add(Convert.ToString(apartment.Adress.City));
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("Street Name");
+            all.SubItems.Add(Convert.ToString(apartment.Adress.StreetName));
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("Street Number");
+            all.SubItems.Add(Convert.ToString(apartment.Adress.StreetNumber));
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("House Number");
+            all.SubItems.Add(Convert.ToString(apartment.Adress.HouseNumber));
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("Floor");
+            all.SubItems.Add(Convert.ToString(apartment.Adress.Floor));
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("Appartemnt Number");
+            all.SubItems.Add(Convert.ToString(apartment.Adress.AppartemntNumber));
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("Rooms");
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("Number of Rooms");
+            all.SubItems.Add(Convert.ToString(apartment.Rooms.NumberOfRooms));
+            lw_Apartment.Items.Add(all);
+
+            decimal generalArea = 0;
+            foreach (Room roomData in apartment.Rooms.Room)
+            {
+                all = new ListViewItem();
+                lw_Apartment.Items.Add(all);
+
+                all = new ListViewItem();
+                all.SubItems.Add(Convert.ToString(roomData.RoomName));
+                lw_Apartment.Items.Add(all);
+
+                all = new ListViewItem("Length");
+                all.SubItems.Add(Convert.ToString(roomData.SideLength1));
+                lw_Apartment.Items.Add(all);
+
+                all = new ListViewItem("Width");
+                all.SubItems.Add(Convert.ToString(roomData.SideLength2));
+                lw_Apartment.Items.Add(all);
+
+                all = new ListViewItem("Area");
+                all.SubItems.Add(Convert.ToString(Decimal.Round(roomData.Area, 2)));
+                lw_Apartment.Items.Add(all);
+
+                generalArea += roomData.Area;
+            }
+
+            all = new ListViewItem("General Area");
+            all.SubItems.Add(Convert.ToString(generalArea));
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("House information");
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("Material Type");
+            all.SubItems.Add(Convert.ToString(apartment.House.MaterialType));
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("House Type");
+            all.SubItems.Add(Convert.ToString(apartment.House.HouseType));
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("Serial Name");
+            all.SubItems.Add(Convert.ToString(apartment.House.SerialName));
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("Serial Number");
+            all.SubItems.Add(Convert.ToString(apartment.House.SerialNumber));
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("Year of construction");
+            all.SubItems.Add(Convert.ToString(apartment.House.Yers));
+            lw_Apartment.Items.Add(all);
+
+            all = new ListViewItem("Floors");
+            all.SubItems.Add(Convert.ToString(apartment.House.Floors));
+            lw_Apartment.Items.Add(all);
+
+        }
+        
+    }
+
+    //Create Button
+    private void createAppartment(object sender, System.EventArgs e)
+    {
+
+        if (cb_Apartments.Text.Equals(""))
+        {
+            messageBoxTemplate("Please insert Name in box", "Name wasn't inserted");
+
+        } else if(apartamentMap.ContainsKey(cb_Apartments.Text))
+        {
+            messageBoxTemplate("Please insert new name", "Name alredy exist");
+        }
+        else createAp();
+
+    }
+
+    private void messageBoxTemplate(string text, string caption)
+    {
+        DialogResult result = MessageBox.Show(
+                        text,
+                        caption,
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                        //MessageBoxDefaultButton.Button1,
+                        //MessageBoxOptions.DefaultDesktopOnly
+                        );
+    }
+
+    private void addingEditingAp(DialogApartment dialog_Apartment, bool add)
+    {
+        if (dialog_Apartment.DialogResult == DialogResult.OK)
+        {
+            if(add)apartamentMap.Add(cb_Apartments.Text, dialog_Apartment.ReturnData());
+            else apartamentMap[cb_Apartments.Text] = dialog_Apartment.ReturnData();
+
+            cb_Apartments.Items.Clear();
+            foreach (KeyValuePair<string, Apartment> entry in apartamentMap)
+            {
+                cb_Apartments.Items.Add(entry.Key);
+                //entry.Value or entry.Key
+
+            }
+            cb_Apartments.Text = "";
+            Controls.Remove(cb_Apartments);
+            Controls.Add(cb_Apartments);
+        }
+        else
+        {
+            cb_Apartments.Text = "";
+        }
+        lw_Apartment.Items.Clear();
+    }
+
+    private void createAp()
+    {
+        DialogApartment dialog_Apartment = new DialogApartment(new Apartment(), false);
+        dialog_Apartment.ShowDialog();
+
+        addingEditingAp(dialog_Apartment, true);
+    }
+
+    private void editAppartment(object sender, System.EventArgs e)
+    {
+        if (cb_Apartments.Text.Equals(""))
+        {
+            //messageBoxTemplate(Convert.ToString(cb_Apartments.Text.Equals("")), cb_Apartments.Text);
+            messageBoxTemplate("Please insert Name in box", "Name wasn't inserted");
+
+        }
+        else editAp();
+    }
+
+    private void editAp()
+    {
+        DialogApartment dialog_Apartment = new DialogApartment(apartamentMap[cb_Apartments.Text], true);
+        dialog_Apartment.ShowDialog();
+
+        addingEditingAp(dialog_Apartment, false);
+    }
+
+
+    private void deleteAppartment(object sender, System.EventArgs e)
+    {
+        if (cb_Apartments.Text.Equals(""))
+        {
+            messageBoxTemplate("Please insert Name in box", "Name wasn't inserted");
+        }
+        else
+        {
+            DialogResult result = MessageBox.Show(
+                        "Do you sure that you want to delete Apartment?",
+                        "Approve delete of Apartment",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Information
+                        );
+
+            if (result == DialogResult.Yes)
+            {
+                apartamentMap.Remove(cb_Apartments.Text);
+                cb_Apartments.Items.Remove(cb_Apartments.Text);
+                cb_Apartments.Text = "";
+            }
+                
         }
     }
 

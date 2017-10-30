@@ -83,17 +83,22 @@ class DialogApartment : Form
     private VScrollBar scrollBar;
     private static List<RomControler> romControler;
 
+    private DialogResult result;
 
-    public DialogApartment(Apartment apartment)
+
+    public DialogApartment(Apartment apartment, bool isOld)
     {
-        this.apartment = apartment;
+        
 
-        Text = "Appatments - Dialog based application";
+        Text = "Apatments - Dialog based application";
         StartPosition = FormStartPosition.Manual;
         Location = new System.Drawing.Point(200, 200);
         Size = new System.Drawing.Size(600, 400);
 
-        Closed += new System.EventHandler(UI_Closed);
+        //FormClosingEvantHandler += new System.EventHandler(UI_Closed);
+        //Closed += new System.EventHandler(UI_Closed);
+
+        FormClosing += new System.Windows.Forms.FormClosingEventHandler(UI_Closed);
 
         // main methods and controlers in tabs
         //Button
@@ -123,6 +128,7 @@ class DialogApartment : Form
         cancel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         cancel.Font = new System.Drawing.Font("Arial", 12F, FontStyle.Bold);
         cancel.ForeColor = System.Drawing.Color.FromArgb(255, 69, 0);
+        cancel.Click += new System.EventHandler(UI_Closed);
 
         Controls.Add(cancel);
 
@@ -132,7 +138,7 @@ class DialogApartment : Form
         //Texts
         cost = new Label();
         cost.Name = "Cost";
-        cost.Text = "General cost of appartments";
+        cost.Text = "General cost of apartments";
         cost.Location = new System.Drawing.Point(16, 16);
         cost.Size = new System.Drawing.Size(200, 60);
         //cost.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -377,8 +383,8 @@ class DialogApartment : Form
 
 
         appartemntNumber = new Label();
-        appartemntNumber.Name = "Appartment Number";
-        appartemntNumber.Text = "Appartment Number";
+        appartemntNumber.Name = "Apartment Number";
+        appartemntNumber.Text = "Apartment Number";
         appartemntNumber.Location = new System.Drawing.Point(16, 166);
         appartemntNumber.Size = new System.Drawing.Size(200, 20);
         appartemntNumber.Font = new System.Drawing.Font("Arial", 10F);
@@ -634,7 +640,13 @@ class DialogApartment : Form
         //tx_Floors.TextChanged += new EventHandler(TextBox_TextChanged);
 
         //Controls.Add(houseType);
+        OneRoomControl();
+        this.apartment = apartment;
 
+        if (isOld)
+        {
+            insertApartamentData();
+        }
 
         // tabs
         //TabControl
@@ -703,7 +715,7 @@ class DialogApartment : Form
         tb_Rooms.Controls.Add(length);
         tb_Rooms.Controls.Add(area);
         //tb_Rooms.Controls.Add(totalArea);
-        OneRoomControl();
+        
 
         groupScroll.Controls.Add(scrollBar);
         groupScroll.Controls.Add(scrollPanel);
@@ -738,34 +750,148 @@ class DialogApartment : Form
         Controls.Add(tc_Main);
     }
 
+    private void insertApartamentData()
+    {
+        tx_Credit.Text = Convert.ToString(apartment.Price);
+        inCredit.Checked = apartment.InCredit;
+        months.Text = "Number of Months                                 " + Convert.ToUInt32(apartment.Months);
+        creditRate.Text = "Credit Rate                                            " + Convert.ToUInt32(apartment.CreditRate) + "%";
+        monthlyPay.Text = "Monthly Pay                                           " + Decimal.Round(apartment.MonthlyPay, 2);
+        trackBar.Value = apartment.Months;
 
 
-    ////=======================================
+        tx_City.Text = apartment.Adress.City;
+        tx_StreetName.Text = apartment.Adress.StreetName;
+        tx_StreetNumber.Value = Convert.ToDecimal(apartment.Adress.StreetNumber);
+        tx_HoseNumber.Value = Convert.ToDecimal(apartment.Adress.HouseNumber);
+        tx_Floor.Value = Convert.ToDecimal(apartment.Adress.Floor);
+        tx_AppartemntNumber.Value = Convert.ToDecimal(apartment.Adress.AppartemntNumber);
 
-    //private Label numberOfRooms;
-    //private NumericUpDown s_NumberOfRooms;
-    //private Label roomName;
-    //private Label width;
-    //private Label length;
-    //private Label area;
-    //private static Label totalArea;
 
-    //private GroupBox groupScroll;
-    //private Panel scrollPanel;
-    //private VScrollBar scrollBar;
-    //private static List<RomControler> romControler;
+        switch (Convert.ToString(apartment.House.MaterialType))
+        {
+            case ("Wood"):
+                lb_MaterialType.SetSelected(0, true);
+                break;
 
-    //private ComboBox cb_Room;
-    //private Label calcArea;
-    //private NumericUpDown tx_Width;
-    //private NumericUpDown tx_Length;
+            case ("Block"):
+                lb_MaterialType.SetSelected(1, true);
+                break;
 
-    //public RomControler(int incr)
+            case ("Brick"):
+                lb_MaterialType.SetSelected(2, true);
+                break;
+
+            case ("Panel"):
+                lb_MaterialType.SetSelected(3, true);
+                break;
+
+            case ("Monolithic"):
+                lb_MaterialType.SetSelected(4, true);
+                break;
+        }
+
+        rb_Private.Checked = false;
+        rb_MultiStorey.Checked = false;
+
+        if (rb_Private.Text.ToString() == Convert.ToString(apartment.House.HouseType)) rb_Private.Checked = true;
+        else rb_MultiStorey.Checked = true;
+
+
+        tx_serialName.Text = apartment.House.SerialName;
+        tx_SerialNumber.Value = Convert.ToDecimal(apartment.House.SerialNumber);
+        tx_Yers.Value = Convert.ToDecimal(apartment.House.Yers);
+        tx_Floors.Value = Convert.ToDecimal(apartment.House.Floors);
+
+        //Room data
+        scrollPanel.Controls.Remove(totalArea);
+        totalArea.Dispose();
+        //Text = Text + " In Insert ";
+
+        for (int i = 0; i < (int)s_NumberOfRooms.Value; i++)
+        {
+            scrollPanel.Controls.Remove(romControler[i].CB_Room);
+            scrollPanel.Controls.Remove(romControler[i].CalcArea);
+            scrollPanel.Controls.Remove(romControler[i].TX_Width);
+            scrollPanel.Controls.Remove(romControler[i].TX_Length);
+
+            romControler[i].CB_Room.Dispose();
+            romControler[i].CalcArea.Dispose();
+            romControler[i].TX_Width.Dispose();
+            romControler[i].TX_Length.Dispose();
+
+            romControler.RemoveAt(i);
+        }
+
+        //s_NumberOfRooms.Value = Convert.ToDecimal(apartment.Rooms.NumberOfRooms);
+        s_NumberOfRooms.Text = Convert.ToString(apartment.Rooms.NumberOfRooms);
+
+        romControler = new List<RomControler>();
+
+        for (int i = 0; i < (int)apartment.Rooms.Room.Count; i++)
+        {
+
+            RomControler room = new RomControler(35 * i);
+            switch (Convert.ToString(apartment.Rooms.Room[i].RoomName))
+            {
+                case ("Kitchen"):
+                    room.CB_Room.Text = room.CB_Room.Items[0].ToString();
+                    break;
+
+                case ("EntranceHall"):
+                    room.CB_Room.Text = room.CB_Room.Items[1].ToString();
+                    break;
+
+                case ("Hall"):
+                    room.CB_Room.Text = room.CB_Room.Items[2].ToString();
+                    break;
+
+                case ("Bedroom"):
+                    room.CB_Room.Text = room.CB_Room.Items[3].ToString();
+                    break;
+
+                case ("Restroom"):
+                    room.CB_Room.Text = room.CB_Room.Items[4].ToString();
+                    break;
+
+                case ("Bath"):
+                    room.CB_Room.Text = room.CB_Room.Items[5].ToString();
+                    break;
+            }
+
+            room.TX_Width.Value = apartment.Rooms.Room[i].SideLength1;
+            room.TX_Length.Value = apartment.Rooms.Room[i].SideLength2;
+            room.CalcArea.Text = Convert.ToString(apartment.Rooms.Room[i].Area);
+            romControler.Add(room);
+
+            scrollPanel.Controls.Add(romControler[i].CB_Room);
+            scrollPanel.Controls.Add(romControler[i].CalcArea);
+            scrollPanel.Controls.Add(romControler[i].TX_Width);
+            scrollPanel.Controls.Add(romControler[i].TX_Length);
+        }
+
+        scrollPanel.Size = new System.Drawing.Size(575, 35 * (int)(s_NumberOfRooms.Value) + 400);
+
+        if ((int)(s_NumberOfRooms.Value) * 45 > 200)
+        {
+            scrollBar.Maximum = (int)(s_NumberOfRooms.Value) * 45;
+            scrollBar.Enabled = true;
+        }
+        else
+        {
+            scrollBar.Enabled = false;
+        }
+
+        totalArea = TotalArea((int)apartment.Rooms.Room.Count);
+        scrollPanel.Controls.Add(totalArea);
+        DialogApartment.changeArea();
+    }
 
 
     private void saveApartment(object sender, System.EventArgs e)
     {
         apartment.Price = Convert.ToDecimal(tx_Credit.Text);
+        apartment.InCredit = inCredit.Checked;
         apartment.CreditRate = (trackBar.Value > 0) ? Convert.ToDecimal(trackBar.Value)/10 : 0;
         apartment.MonthlyPay = (trackBar.Value > 0) 
             ? (Convert.ToDecimal(tx_Credit.Text) * Convert.ToDecimal(trackBar.Value) / 10 / 100 + Convert.ToDecimal(tx_Credit.Text)) / trackBar.Value 
@@ -801,10 +927,12 @@ class DialogApartment : Form
         apartment.House.MaterialType = (MaterialType)Enum.Parse(typeof(MaterialType), lb_MaterialType.SelectedItem.ToString());
         apartment.House.HouseType = (rb_Private.Checked) ? (HouseType)Enum.Parse(typeof(HouseType), rb_Private.Text.ToString()) 
             : (HouseType)Enum.Parse(typeof(HouseType), rb_MultiStorey.Text.ToString());
-        apartment.House.SerialName = tx_AppartemntNumber.Text;
-        apartment.House.SerialNumber = Convert.ToInt32(tx_AppartemntNumber.Text);
-        apartment.House.Yers = Convert.ToInt32(tx_AppartemntNumber.Text);
-        apartment.House.Floors = Convert.ToInt32(tx_AppartemntNumber.Text);
+        apartment.House.SerialName = tx_serialName.Text;
+        apartment.House.SerialNumber = Convert.ToInt32(tx_SerialNumber.Value);
+        apartment.House.Yers = Convert.ToInt32(tx_Yers.Value);
+        apartment.House.Floors = Convert.ToInt32(tx_Floors.Value);
+
+        result = DialogResult.Yes;
 
         this.DialogResult = DialogResult.OK;
     }
@@ -834,30 +962,6 @@ class DialogApartment : Form
         }
     }
 
-    //private void Grid_KeyUp_City(object sender, System.Windows.Forms.KeyEventArgs e)
-    //{
-    //    if (e.KeyCode == Keys.Enter)
-    //    {
-    //        if (!CityList.Contains(tx_City.Text)) {
-    //            CityList.Add(tx_City.Text);
-
-    //            tb_Adress.Controls.Remove(tx_City);
-    //            tx_City.DataSource = CityList;
-    //            tb_Adress.Controls.Add(tx_City);
-    //        }
-
-    //    } else if (e.KeyCode == Keys.Delete)
-    //    {
-    //        CityList.Remove(tx_City.Text);
-
-    //        tb_Adress.Controls.Remove(tx_City);
-    //        tx_City.DataSource = CityList;
-
-
-    //        tb_Adress.Controls.Add(tx_City);
-
-    //    }
-    //}
 
     private void Grid_KeyUp_Street(object sender, System.Windows.Forms.KeyEventArgs e)
     {
@@ -1020,9 +1124,10 @@ class DialogApartment : Form
                         "Do you sure that you want to delete last room?",
                         "Approve delete of room",
                         MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Information,
-                        MessageBoxDefaultButton.Button1,
-                        MessageBoxOptions.DefaultDesktopOnly);
+                        MessageBoxIcon.Information
+                        //MessageBoxDefaultButton.Button1,
+                        //MessageBoxOptions.DefaultDesktopOnly
+                        );
 
             if (result == DialogResult.Yes)
             {
@@ -1060,69 +1165,75 @@ class DialogApartment : Form
         scrollPanel.Controls.Add(totalArea);
         DialogApartment.changeArea();
 
+    }
 
-        //if (romControler != null)
+
+    private void UI_Closed(object sender, FormClosingEventArgs e)
+    {
+
+        if (result != DialogResult.Yes && result != DialogResult.No)
+        {
+            result = MessageBox.Show(
+                            "Do you sure that you want to leave without saving?",
+                            "Approve exit",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Information
+                            );
+        }
+
+        if (result == DialogResult.Yes)
+        {
+            e.Cancel = false;
+            Dispose();
+        }
+        else
+        {
+            result = DialogResult.None;
+            e.Cancel = true;
+        }
+
+
+        //if (result == DialogResult.Yes)
         //{
-        //    for (int i = 0; i < romControler.Count; i++)
+        //    e.Cancel = false;
+        //    Dispose();
+        //}
+        //else if (result == DialogResult.Yes)
+        //{
+        //    e.Cancel = true;
+        //}
+        //else
+        //{
+        //    result = MessageBox.Show(
+        //                "Do you sure that you want to leave without saving?",
+        //                "Approve exit",
+        //                MessageBoxButtons.YesNo,
+        //                MessageBoxIcon.Information
+        //                );
+
+        //    if (result == DialogResult.Yes)
         //    {
-        //        scrollPanel.Controls.Remove(romControler[i].CB_Room);
-        //        scrollPanel.Controls.Remove(romControler[i].CalcArea);
-        //        scrollPanel.Controls.Remove(romControler[i].TX_Length);
-        //        scrollPanel.Controls.Remove(romControler[i].TX_Width);
-
-        //        romControler[i].CB_Room.Dispose();
-        //        romControler[i].CalcArea.Dispose();
-        //        romControler[i].TX_Width.Dispose();
-        //        romControler[i].TX_Length.Dispose();
+        //        e.Cancel = false;
+        //        Dispose();
         //    }
-        //    scrollPanel.Controls.Remove(this.totalArea);
-        //    this.totalArea.Dispose();
+        //    else e.Cancel = true;
+
         //}
-
-        //scrollPanel.Controls.Remove(this.totalArea);
-        //    this.totalArea.Dispose();
-
-
-        //romControler = new List<RomControler>();
-        //int incr = 35;
-        //for (int i = 0; i < s_NumberOfRooms.Value; i++)
-        //{   
-        //    romControler.Add(new RomControler(incr * i));
-        //}
-
-        //scrollPanel.Size = new System.Drawing.Size(575, 35 * (int)(s_NumberOfRooms.Value) + 400);
-
-        //if((int)(s_NumberOfRooms.Value) * 45 > 200)
-        //{
-        //    scrollBar.Maximum = (int)(s_NumberOfRooms.Value) * 45;
-        //    scrollBar.Enabled = true;
-        //}else {
-        //    scrollBar.Enabled = false;
-        //}
-
-
-        //totalArea = TotalArea((Int32)(s_NumberOfRooms.Value));
-        //scrollPanel.Controls.Add(totalArea);
-
-        //foreach (RomControler i in romControler)
-        //{
-        //    scrollPanel.Controls.Add(i.CB_Room);
-        //    scrollPanel.Controls.Add(i.CalcArea);
-        //    scrollPanel.Controls.Add(i.TX_Width);
-        //    scrollPanel.Controls.Add(i.TX_Length);
-        //}
-
-        ////if (scrollPanel.Height < 85 + 35 * s_NumberOfRooms.Value)
-        ////{
-        ////    scrollPanel.Size = new System.Drawing.Size(560, 200);
-        ////}
-
     }
 
     private void UI_Closed(object sender, EventArgs e)
     {
- 
-    Dispose();
+        result = MessageBox.Show(
+                        "Do you sure that you want to leave without saving?",
+                        "Approve exit",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Information
+                        );
+        if (result == DialogResult.Yes)
+        {
+            Close();
+        }
+        
     }
 
     public static void changeArea()
